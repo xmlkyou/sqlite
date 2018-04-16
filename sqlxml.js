@@ -1,0 +1,10 @@
+var sql=require('sql.js');var fs=require('fs');
+var file_path='xml.sqlite';
+var filebuffer = fs.readFileSync(file_path);var db=new sql.Database(filebuffer);
+//var sqlstr='CREATE TABLE clannad (id integer primary key AutoIncrement, name char(16), age int, job char(16)); ';
+//db.run(sqlstr);
+//sqlstr='insert into clannad(name,age,job) values(\'xml\',15,\'student\'); insert into clannad(name,age,job) values(\'kyou\',15,\'student\');insert into clannad(name,age,job) values(\'nagisa\',15,\'student\');';//db.run(sqlstr);
+var result=[];sqlstr='select id,name,age from clannad where name=? or name=?';var stmt = db.prepare(sqlstr);stmt.bind(['xml','kyou']);while (stmt.step()) result.push(stmt.getAsObject());stmt.free();console.log('first:'+JSON.stringify(result));
+sqlstr='update clannad set age=17 where name=?';stmt = db.prepare(sqlstr);stmt.bind(['xml']);stmt.run();stmt.free();
+result=[];sqlstr = "SELECT id,name,age FROM clannad where name='xml'";stmt = db.prepare(sqlstr);result = stmt.getAsObject([]);stmt.free();console.log('sesond:'+JSON.stringify(result));
+fs.writeFileSync(file_path, new Buffer(db.export()));
